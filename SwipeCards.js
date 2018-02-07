@@ -89,7 +89,8 @@ export default class SwipeCards extends Component {
     renderCard: PropTypes.func,
     cardRemoved: PropTypes.func,
     dragY: PropTypes.bool,
-    smoothTransition: PropTypes.bool
+    smoothTransition: PropTypes.bool,
+    onStackEmpty: PropTypes.func
   };
 
   static defaultProps = {
@@ -115,6 +116,7 @@ export default class SwipeCards extends Component {
     onClickHandler: () => { alert('tap') },
     onDragStart: () => {},
     onDragRelease: () => {},
+    onStackEmpty: () => {},
     cardRemoved: (ix) => null,
     renderCard: (card) => null,
     style: styles.container,
@@ -273,7 +275,13 @@ export default class SwipeCards extends Component {
 
     // Checks to see if last card.
     // If props.loop=true, will start again from the first card.
-    if (currentIndex[this.guid] > this.state.cards.length - 1 && this.props.loop) {
+    const isLastCard = currentIndex[this.guid] > this.state.cards.length - 1;
+
+    if (isLastCard) {
+      this.props.onStackEmpty();
+    }
+
+    if (isLastCard && this.props.loop) {
       this.props.onLoop();
       currentIndex[this.guid] = 0;
     }
